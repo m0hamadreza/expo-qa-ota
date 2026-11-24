@@ -83,5 +83,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // native channel (Updates.channel), because this object is baked into each
     // OTA bundle at export time and is shared by both builds.
     variant,
+     eas: {
+      projectId: 'e268b275-24e8-4c66-a500-38b40f37eb70',
+    },
+    
   },
 });

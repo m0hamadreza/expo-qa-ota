@@ -59,9 +59,18 @@ npm run infra:bootstrap            # app + token + certificate + channels → .e
 
 ## Build the two apps
 
+Both workflows build installable Android release APKs.
+
+| Variant | Local Android build | EAS cloud build |
+|---|---|---|
+| QA | `npm run build:qa` | `npm run build:eas:qa` |
+| Production | `npm run build:prod` | `npm run build:eas:prod` |
+| Both | `npm run build:all` | `npm run build:eas:all` |
+
+### Local
+
 ```bash
-npm run build:qa     # → builds/ota-demo-qa.apk
-npm run build:prod   # → builds/ota-demo-prod.apk
+npm run build:all    # builds/ota-demo-qa.apk and builds/ota-demo-prod.apk
 adb install -r builds/ota-demo-qa.apk
 adb install -r builds/ota-demo-prod.apk
 ```
@@ -75,6 +84,14 @@ adb install -r builds/ota-demo-prod.apk
 - Docker Hub: `infra/docker-compose.yml` uses `postgres:16-alpine` with `pull_policy: missing`, so an image already on your machine is enough.
 
 Both have different package names, so they sit side by side on one phone. They're signed with the debug key, which is fine for learning but not for the Play Store.
+
+### EAS cloud
+
+Run `npx eas-cli@latest login` and `npx eas-cli@latest init` once to link your Expo project. If prompted to edit the dynamic config, add the project ID under `extra.eas.projectId` in `app.config.ts`.
+
+Set `XPREM_URL` and `XPREM_APP_ID` in `build.production.env` in `eas.json`. The QA profile inherits both and sets its own `APP_VARIANT`. The current URL is only reachable on the local network; use a reachable HTTPS URL for testers outside it. Keep `EOO_TOKEN` out of the build profiles; it is only needed for publishing OTA updates.
+
+EAS CLI prompts for Android signing credentials on the first build of each variant. `npm run build:eas:all` queues both builds and prints links to their EAS build pages, where the APKs are available when the jobs finish.
 
 ## Day-to-day flow
 
@@ -118,6 +135,7 @@ The dashboard can do the same, and also partial rollouts (`--rollout-percentage`
 ## خلاصه فارسی
 
 - دو اپ از یه کد: **QA** (کانال `qa`) و **Production** (کانال `production`). فرقشون فقط موقع build با `APP_VARIANT` تعیین می‌شه.
+- `npm run build:all` برای هر دو اپ APK اندروید release می‌سازه و توی `builds/` می‌ذاره. برای بیلد ابری هر دو از `npm run build:eas:all` استفاده کن.
 - سرور آپدیت **xprem** با Docker روی سیستم خودت بالا میاد (`npm run infra:up`) و `npm run infra:bootstrap` همه‌چیز رو تنظیم می‌کنه.
 - هر برنچ git با `npm run publish:ota` روی سرور منتشر می‌شه (`/` تبدیل به `-` می‌شه).
 - اپ QA با صفحه‌ی انتخاب برنچ باز می‌شه: تیم QA برنچ رو انتخاب می‌کنه، «Enter app» رو می‌زنه و اپ با کد همون برنچ باز می‌شه. داخل خود اپ برنچ عوض نمی‌شه؛ برای عوض کردن، اپ رو کامل ببند و دوباره باز کن.
