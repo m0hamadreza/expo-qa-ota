@@ -1,4 +1,3 @@
-import { ControlCenter, openControlCenter } from '@xprem/control-center';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
@@ -25,19 +24,11 @@ export default function App() {
           <Text style={styles.buttonText}>Add to cart</Text>
         </Pressable>
 
-        {isQA ? (
-          <Pressable style={styles.secondary} onPress={() => openControlCenter()}>
-            <Text style={styles.secondaryText}>Switch branch</Text>
-          </Pressable>
-        ) : (
-          <UpdateBanner />
-        )}
+        {/* QA switches branch on the picker before the app (src/BranchGate.tsx), not here. */}
+        {!isQA && <UpdateBanner />}
 
         <BuildInfo />
       </View>
-
-      {/* Branch picker from xprem. Only the QA build mounts it. */}
-      {isQA && <ControlCenter />}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -68,12 +59,4 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
-  secondary: {
-    borderWidth: 1,
-    borderColor: '#F97316',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  secondaryText: { color: '#F97316', fontWeight: '600' },
 });

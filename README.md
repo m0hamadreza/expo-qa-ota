@@ -2,7 +2,7 @@
 
 A learning project: one Expo app, two builds, and a **self-hosted** over-the-air (OTA) update server.
 
-- **QA build** ("OTA Demo QA"): testers pick any published branch inside the app and the app reloads with that branch's code.
+- **QA build** ("OTA Demo QA"): opens on a branch picker. Testers pick a published branch, tap **Enter app**, and the app opens with that branch's code. Branches are switched only there, never inside the app.
 - **Production build** ("OTA Demo"): what users install. It only gets what is on `main`.
 - **Update server**: [xprem](https://www.xprem.dev/) (open source, Expo Updates protocol), running in Docker on your machine (later: your own server).
 
@@ -22,7 +22,7 @@ Production  (channel "production" → main) ─────┘  always gets the 
 | **branch** | one per git branch (`/` becomes `-`, so `fix/button` → `fix-button`) |
 | **channel** | baked into the APK: `qa` or `production` |
 | **channel → branch** | both channels point at `main` |
-| **branch surfing** | enabled on `qa` only, pattern `*`. The in-app picker is `@xprem/control-center` |
+| **branch surfing** | enabled on `qa` only, pattern `*`. The start screen `src/BranchGate.tsx` uses `@xprem/control-center` to list and switch branches |
 | **runtimeVersion** | `1.0.0` in `app.config.ts`. Updates only reach builds with the same value |
 
 OTA updates replace **JavaScript and assets only**. If a branch adds a native module or changes native config, bump `runtimeVersion` and build new APKs. Branches built for another runtime version don't show up in the QA picker.
@@ -31,6 +31,8 @@ OTA updates replace **JavaScript and assets only**. If a branch adds a native mo
 
 ```
 App.tsx                 demo screen (with a deliberate "Add to cart" bug on main)
+src/Root.tsx            QA: branch picker first, then the app. Production: the app directly
+src/BranchGate.tsx      QA start screen: pick a branch → Enter app
 src/variant.ts          QA vs production, read from the native channel (Updates.channel)
 src/BuildInfo.tsx       shows channel / branch / update id
 src/UpdateBanner.tsx    production: "new version ready, tap to restart"
@@ -83,7 +85,8 @@ Both have different package names, so they sit side by side on one phone. They'r
    # ...fix, commit, push to GitHub...
    npm run publish:ota          # publishes branch "fix-button"
    ```
-3. QA opens the **QA app** → **Switch branch** (or the blue marker on the right edge) → picks `fix-button` → the app reloads with the fix.
+3. QA opens the **QA app** → the start screen lists the branches → picks `fix-button` → **Enter app** → the app reloads with the fix and opens. To change branch again, close the app fully and reopen it.
+   The picker lives in the JS bundle, so a branch only shows it if it was published from code that includes `src/BranchGate.tsx`.
 4. QA approves → merge into `main` → publish `main`:
    ```bash
    git checkout main && git merge fix/button && git push
@@ -117,6 +120,6 @@ The dashboard can do the same, and also partial rollouts (`--rollout-percentage`
 - دو اپ از یه کد: **QA** (کانال `qa`) و **Production** (کانال `production`). فرقشون فقط موقع build با `APP_VARIANT` تعیین می‌شه.
 - سرور آپدیت **xprem** با Docker روی سیستم خودت بالا میاد (`npm run infra:up`) و `npm run infra:bootstrap` همه‌چیز رو تنظیم می‌کنه.
 - هر برنچ git با `npm run publish:ota` روی سرور منتشر می‌شه (`/` تبدیل به `-` می‌شه).
-- تیم QA توی اپ QA با «Switch branch» برنچ رو انتخاب می‌کنه و اپ با همون کد ری‌لود می‌شه.
+- اپ QA با صفحه‌ی انتخاب برنچ باز می‌شه: تیم QA برنچ رو انتخاب می‌کنه، «Enter app» رو می‌زنه و اپ با کد همون برنچ باز می‌شه. داخل خود اپ برنچ عوض نمی‌شه؛ برای عوض کردن، اپ رو کامل ببند و دوباره باز کن.
 - بعد از تأیید QA، merge به `main` و `npm run publish:ota` روی main. کاربرهای Production دفعه بعد که اپ رو باز کنن آپدیت رو می‌گیرن.
 - OTA فقط JS و asset رو عوض می‌کنه. تغییر native یعنی بالا بردن `runtimeVersion` و build جدید.

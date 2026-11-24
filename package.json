@@ -16,6 +16,8 @@
     "@types/node": "^24.19.2",
     "@types/react": "~19.3.0",
     "eoas": "3.2.8",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -28,7 +30,8 @@
     "publish:ota": "node scripts/publish.mjs",
     "build:qa": "APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
     "build:prod": "APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "expo lint"
   },
   "private": true
 }

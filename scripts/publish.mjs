@@ -79,7 +79,7 @@ if (result.status === 0) {
   console.log(
     branch === 'main'
       ? '\n✓ Published to main -> production users get it on their next app launch.'
-      : `\n✓ Published. QA can now pick "${branch}" in the QA app (Switch branch).`,
+      : `\n✓ Published. QA can now pick "${branch}" on the QA app's start screen.`,
   );
 }
 process.exit(result.status ?? 1);
