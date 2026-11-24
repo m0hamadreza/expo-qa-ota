@@ -1,0 +1,36 @@
+# Publishes every pushed branch as an OTA update to the xprem server.
+#
+# Off until you set it up (the server is on your laptop for now, which GitHub's
+# cloud runners can't reach). To turn it on:
+#   1. Put xprem somewhere reachable (your own server, or a tunnel), OR register
+#      a self-hosted runner on your Mac and set the repo variable RUNNER=self-hosted.
+#   2. Repo Settings -> Secrets and variables -> Actions:
+#        secret   EOO_TOKEN      (API token from the xprem dashboard)
+#        variable XPREM_URL      (e.g. https://ota.example.com)
+#        variable XPREM_APP_ID   (App ID from the xprem dashboard)
+name: Publish OTA update
+
+on:
+  push:
+    branches: ['**']
+
+concurrency:
+  group: ota-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: ${{ vars.XPREM_URL != '' }}
+    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/publish.mjs --platform android
+        env:
+          EOO_TOKEN: ${{ secrets.EOO_TOKEN }}
+          XPREM_URL: ${{ vars.XPREM_URL }}
+          XPREM_APP_ID: ${{ vars.XPREM_APP_ID }}
