@@ -5,8 +5,8 @@
 //   npm run publish:ota -- --branch x   -> explicit branch name
 //   npm run publish:ota -- --platform all
 //
-// The xprem branch gets the same name as the git branch, so QA sees
-// "fix/button" in the app exactly as it appears on GitHub.
+// The xprem branch gets the git branch name (with "/" turned into "-"), so QA
+// sees "fix-button" in the app for the GitHub branch "fix/button".
 // Publishing on "main" ships to production users (channel production -> main).
 import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -45,11 +45,13 @@ if (dirty) {
   process.exit(1);
 }
 
-const branch = arg('branch', process.env.GITHUB_REF_NAME ?? git('rev-parse', '--abbrev-ref', 'HEAD'));
-if (branch === 'HEAD') {
+const gitBranch = arg('branch', process.env.GITHUB_REF_NAME ?? git('rev-parse', '--abbrev-ref', 'HEAD'));
+if (gitBranch === 'HEAD') {
   console.error('Detached HEAD: pass --branch <name>.');
   process.exit(1);
 }
+// xprem's URLs don't accept "/" in branch names: git "fix/button" -> xprem "fix-button".
+const branch = gitBranch.replaceAll('/', '-');
 const platform = arg('platform', 'android');
 const sha = git('rev-parse', '--short', 'HEAD');
 const subject = git('log', '-1', '--format=%s');
