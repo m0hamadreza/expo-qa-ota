@@ -1,0 +1,33 @@
+// Gradle init script: replaces Google's Maven repo (dl.google.com / maven.google.com,
+// blocked from some networks) with Alibaba Cloud's public mirror of it.
+// Only the Google repo is swapped; Maven Central, the Gradle plugin portal, etc. are untouched.
+//
+// Used by `npm run build:qa|build:prod` via `--init-script`. Init scripts also apply
+// to included builds (Expo / React Native Gradle plugins), which is why this is not
+// a config plugin. Remove the flag from package.json if Google's repo works for you.
+
+def MIRROR = 'https://maven.aliyun.com/repository/google'
+
+def isGoogle = { String url ->
+  url.startsWith('https://dl.google.com/dl/android/maven2') ||
+    url.startsWith('https://maven.google.com')
+}
+
+def swap = { RepositoryHandler repos ->
+  repos.withType(MavenArtifactRepository).configureEach { repo ->
+    if (isGoogle(repo.url.toString())) {
+      repo.url = MIRROR
+    }
+  }
+}
+
+beforeSettings { settings ->
+  swap(settings.buildscript.repositories)
+  swap(settings.pluginManagement.repositories)
+  swap(settings.dependencyResolutionManagement.repositories)
+}
+
+allprojects {
+  swap(buildscript.repositories)
+  swap(repositories)
+}

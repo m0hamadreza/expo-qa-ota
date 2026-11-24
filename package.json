@@ -26,8 +26,8 @@
     "infra:logs": "docker compose -f infra/docker-compose.yml --env-file infra/.env logs -f xprem",
     "infra:bootstrap": "node infra/bootstrap.mjs",
     "publish:ota": "node scripts/publish.mjs",
-    "build:qa": "APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
-    "build:prod": "APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
+    "build:qa": "APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
+    "build:prod": "APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
     "typecheck": "tsc --noEmit"
   },
   "private": true
