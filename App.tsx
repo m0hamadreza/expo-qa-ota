@@ -21,8 +21,7 @@ export default function App() {
         <Text style={styles.title}>Cart</Text>
         <Text style={styles.count}>{count} items</Text>
 
-        {/* BUG (on purpose, for the demo): the button doesn't add anything. */}
-        <Pressable style={styles.button} onPress={() => setCount(count)}>
+        <Pressable style={styles.button} onPress={() => setCount((c) => c + 1)}>
           <Text style={styles.buttonText}>Add to cart</Text>
         </Pressable>
 
