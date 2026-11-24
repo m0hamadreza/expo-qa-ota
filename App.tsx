@@ -1,20 +1,80 @@
+import { ControlCenter, openControlCenter } from '@xprem/control-center';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { BuildInfo } from './src/BuildInfo';
+import { UpdateBanner } from './src/UpdateBanner';
+import { isQA } from './src/variant';
 
 export default function App() {
+  const [count, setCount] = useState(0);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.container}>
+        {isQA && (
+          <View style={styles.qaBadge}>
+            <Text style={styles.qaBadgeText}>QA BUILD</Text>
+          </View>
+        )}
+
+        <Text style={styles.title}>Cart</Text>
+        <Text style={styles.count}>{count} items</Text>
+
+        {/* BUG (on purpose, for the demo): the button doesn't add anything. */}
+        <Pressable style={styles.button} onPress={() => setCount(count)}>
+          <Text style={styles.buttonText}>Add to cart</Text>
+        </Pressable>
+
+        {isQA ? (
+          <Pressable style={styles.secondary} onPress={() => openControlCenter()}>
+            <Text style={styles.secondaryText}>Switch branch</Text>
+          </Pressable>
+        ) : (
+          <UpdateBanner />
+        )}
+
+        <BuildInfo />
+      </View>
+
+      {/* Branch picker from xprem. Only the QA build mounts it. */}
+      {isQA && <ControlCenter />}
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#fff' },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 24,
+    gap: 16,
   },
+  qaBadge: {
+    backgroundColor: '#F97316',
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  qaBadgeText: { color: 'white', fontWeight: '700', letterSpacing: 1 },
+  title: { fontSize: 28, fontWeight: '700' },
+  count: { fontSize: 20, color: '#3F3F46' },
+  button: {
+    backgroundColor: '#16A34A',
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    borderRadius: 12,
+  },
+  buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
+  secondary: {
+    borderWidth: 1,
+    borderColor: '#F97316',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  secondaryText: { color: '#F97316', fontWeight: '600' },
 });

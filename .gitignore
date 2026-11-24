@@ -39,3 +39,11 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# OTA demo
+builds/
+infra/.env
+infra/data/
+.env.local
+# the update-signing certificate is public and must be committed
+!certs/certificate.pem

@@ -3,20 +3,32 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@xprem/control-center": "3.2.8",
     "expo": "~58.0.26",
+    "expo-build-properties": "~58.0.12",
+    "expo-constants": "~58.0.16",
     "expo-status-bar": "~58.0.5",
+    "expo-updates": "~58.0.22",
     "react": "19.3.0",
     "react-native": "0.88.1"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "@types/react": "~19.3.0",
+    "eoas": "3.2.8",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "expo run:android",
+    "infra:up": "docker compose -f infra/docker-compose.yml --env-file infra/.env up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml --env-file infra/.env down",
+    "infra:logs": "docker compose -f infra/docker-compose.yml --env-file infra/.env logs -f xprem",
+    "infra:bootstrap": "node infra/bootstrap.mjs",
+    "publish:ota": "node scripts/publish.mjs",
+    "build:qa": "APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
+    "build:prod": "APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
+    "typecheck": "tsc --noEmit"
   },
   "private": true
 }
