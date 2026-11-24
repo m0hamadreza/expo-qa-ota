@@ -64,6 +64,14 @@ adb install -r builds/ota-demo-qa.apk
 adb install -r builds/ota-demo-prod.apk
 ```
 
+**If Google's servers are blocked on your network** (they answer 404 even through some VPNs):
+- Gradle libraries: the build scripts already pass `--init-script gradle/google-mirror.init.gradle`, which swaps Google's Maven repo for Alibaba Cloud's mirror. Drop that flag from `package.json` if you don't need it.
+- Android SDK packages (Expo SDK 58 needs Build Tools 37.0.0 and Platform 37):
+  ```bash
+  SDK_TEST_BASE_URL=https://mirrors.cloud.tencent.com/AndroidSDK/ ~/Library/Android/sdk/cmdline-tools/latest/bin/sdkmanager --install "build-tools;37.0.0" "platforms;android-37.0"
+  ```
+- Docker Hub: `infra/docker-compose.yml` uses `postgres:16-alpine` with `pull_policy: missing`, so an image already on your machine is enough.
+
 Both have different package names, so they sit side by side on one phone. They're signed with the debug key, which is fine for learning but not for the Play Store.
 
 ## Day-to-day flow
