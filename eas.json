@@ -3,6 +3,14 @@
     "appVersionSource": "local"
   },
   "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "environment": "production",
+      "env": {
+        "APP_VARIANT": "development"
+      }
+    },
     "production": {
       "distribution": "internal",
       "environment": "production",

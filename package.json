@@ -8,6 +8,7 @@
     "expo": "~58.0.26",
     "expo-build-properties": "~58.0.12",
     "expo-constants": "~58.0.16",
+    "expo-dev-client": "~58.0.21",
     "expo-status-bar": "~58.0.5",
     "expo-updates": "~58.0.22",
     "react": "19.3.0",
@@ -22,7 +23,8 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --go",
+    "start:dev": "APP_VARIANT=development expo start --dev-client --scheme expoqaota-dev",
     "android": "expo run:android",
     "infra:up": "docker compose -f infra/docker-compose.yml --env-file infra/.env up -d",
     "infra:down": "docker compose -f infra/docker-compose.yml --env-file infra/.env down",
@@ -32,6 +34,7 @@
     "build:qa": "mkdir -p builds && APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
     "build:prod": "mkdir -p builds && APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
     "build:all": "npm run build:qa && npm run build:prod",
+    "build:eas:dev": "npx eas-cli@latest build --platform android --profile development",
     "build:eas:qa": "npx eas-cli@latest build --platform android --profile qa --local",
     "build:eas:prod": "npx eas-cli@latest build --platform android --profile production",
     "build:eas:all": "npm run build:eas:qa -- --no-wait && npm run build:eas:prod -- --no-wait",

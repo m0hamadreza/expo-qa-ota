@@ -3,12 +3,15 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Two native builds from one codebase:
+// Three native builds from one codebase:
+//   APP_VARIANT=development -> "OTA Demo Dev", local Metro server
 //   APP_VARIANT=qa          -> "OTA Demo QA", channel "qa"  (branch surfing allowed)
 //   APP_VARIANT=production  -> "OTA Demo",    channel "production" (served "main" only)
-// Both get JS updates from the self-hosted xprem server.
-const variant = process.env.APP_VARIANT === 'qa' ? 'qa' : 'production';
+const appVariant = process.env.APP_VARIANT;
+const variant = appVariant === 'qa' || appVariant === 'development' ? appVariant : 'production';
 const IS_QA = variant === 'qa';
+const IS_DEV = variant === 'development';
+const appIdentifier = `dev.example.expoqaota${IS_DEV ? '.dev' : IS_QA ? '.qa' : ''}`;
 
 // eoas runs `expo export` with EXPO_NO_DOTENV=1, so read .env.local ourselves
 // (written by `npm run infra:bootstrap`). Real env vars win.
@@ -28,8 +31,9 @@ const XPREM_APP_ID = localEnv('XPREM_APP_ID') ?? '';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: IS_QA ? 'OTA Demo QA' : 'OTA Demo',
+  name: IS_DEV ? 'OTA Demo Dev' : IS_QA ? 'OTA Demo QA' : 'OTA Demo',
   slug: 'expo-qa-ota',
+  ...(IS_DEV && { scheme: 'expoqaota-dev' }),
   version: '1.0.0',
   // Bump this whenever native code changes (new native package, SDK upgrade...).
   // Updates are only served to builds with the exact same runtimeVersion.
@@ -38,7 +42,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
   android: {
-    package: IS_QA ? 'dev.example.expoqaota.qa' : 'dev.example.expoqaota',
+    package: appIdentifier,
     adaptiveIcon: {
       backgroundColor: IS_QA ? '#FFE8CC' : '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -49,10 +53,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: {
     supportsTablet: true,
-    bundleIdentifier: IS_QA ? 'dev.example.expoqaota.qa' : 'dev.example.expoqaota',
+    bundleIdentifier: appIdentifier,
   },
   web: { favicon: './assets/favicon.png' },
-  updates: {
+  updates: IS_DEV ? { enabled: false } : {
     url: `${XPREM_URL}/manifest`,
     enabled: true,
     checkAutomatically: 'ON_LOAD',

@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 
-export type Variant = 'qa' | 'production';
+export type Variant = 'development' | 'qa' | 'production';
 
 /**
  * Which build is running. In a release build this comes from the native

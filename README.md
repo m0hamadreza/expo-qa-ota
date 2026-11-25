@@ -1,7 +1,8 @@
 # expo-qa-ota
 
-A learning project: one Expo app, two builds, and a **self-hosted** over-the-air (OTA) update server.
+A learning project: one Expo app, three build variants, and a **self-hosted** over-the-air (OTA) update server.
 
+- **Development build** ("OTA Demo Dev"): connects to Metro for local development.
 - **QA build** ("OTA Demo QA"): opens on a branch picker. Testers pick a published branch, tap **Enter app**, and the app opens with that branch's code. Branches are switched only there, never inside the app.
 - **Production build** ("OTA Demo"): what users install. It only gets what is on `main`.
 - **Update server**: [xprem](https://www.xprem.dev/) (open source, Expo Updates protocol), running in Docker on your machine (later: your own server).
@@ -36,7 +37,7 @@ src/BranchGate.tsx      QA start screen: pick a branch → Enter app
 src/variant.ts          QA vs production, read from the native channel (Updates.channel)
 src/BuildInfo.tsx       shows channel / branch / update id
 src/UpdateBanner.tsx    production: "new version ready, tap to restart"
-app.config.ts           APP_VARIANT=qa|production → name, package, channel
+app.config.ts           APP_VARIANT=development|qa|production → name, package, updates
 infra/docker-compose.yml  xprem + Postgres
 infra/bootstrap.mjs     creates app, API token, certificate, channels, branch surfing
 scripts/publish.mjs     publishes the current git branch
@@ -66,7 +67,19 @@ npm run infra:bootstrap            # app + token + certificate + channels → .e
 
 `BASE_URL` must be reachable from the phone (`ipconfig getifaddr en0`), not `localhost`. If your IP changes, update `infra/.env`, restart, re-run the bootstrap and rebuild the APKs (the URL is baked into the build).
 
-## Build the two apps
+## Development build
+
+```bash
+npm run build:eas:dev  # Build an Android APK with EAS
+npm run start:dev      # Start Metro after installing the APK
+```
+
+Open **OTA Demo Dev** and connect to Metro using the QR code. The development
+build installs alongside QA and Production and uses Metro for JavaScript changes.
+It uses the existing EAS `production` environment for `NODE_AUTH_TOKEN`, which
+is needed to install the private Design System package during the build.
+
+## Build QA and Production
 
 Both workflows build installable Android release APKs.
 
@@ -164,6 +177,7 @@ Packages read token so the workflow can run `npm ci`.
 
 ## خلاصه فارسی
 
+- `npm run build:eas:dev` از طریق EAS نسخهٔ توسعهٔ اندروید رو می‌سازه. بعد از نصب APK، با `npm run start:dev` سرور Metro رو بالا بیار.
 - دو اپ از یه کد: **QA** (کانال `qa`) و **Production** (کانال `production`). فرقشون فقط موقع build با `APP_VARIANT` تعیین می‌شه.
 - `npm run build:all` برای هر دو اپ APK اندروید release می‌سازه و توی `builds/` می‌ذاره. برای بیلد ابری هر دو از `npm run build:eas:all` استفاده کن.
 - سرور آپدیت **xprem** با Docker روی سیستم خودت بالا میاد (`npm run infra:up`) و `npm run infra:bootstrap` همه‌چیز رو تنظیم می‌کنه.
