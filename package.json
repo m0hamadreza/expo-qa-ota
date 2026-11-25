@@ -1,7 +1,7 @@
 {
   "name": "expo-qa-ota",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "dependencies": {
     "@m0hamadreza/expo-qa-ota-design-system": "0.1.0",
     "@xprem/control-center": "3.2.8",
@@ -9,10 +9,15 @@
     "expo-build-properties": "~58.0.12",
     "expo-constants": "~58.0.16",
     "expo-dev-client": "~58.0.21",
+    "expo-linking": "~58.0.17",
+    "expo-router": "~58.0.32",
     "expo-status-bar": "~58.0.5",
     "expo-updates": "~58.0.22",
     "react": "19.3.0",
-    "react-native": "0.88.1"
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-screens": "~4.30.1"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
@@ -34,9 +39,9 @@
     "build:qa": "mkdir -p builds && APP_VARIANT=qa npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-qa.apk",
     "build:prod": "mkdir -p builds && APP_VARIANT=production npx expo prebuild --clean -p android && cd android && ./gradlew assembleRelease --init-script ../gradle/google-mirror.init.gradle && cp app/build/outputs/apk/release/app-release.apk ../builds/ota-demo-prod.apk",
     "build:all": "npm run build:qa && npm run build:prod",
-    "build:eas:dev": "npx eas-cli@latest build --platform android --profile development",
+    "build:eas:dev": "npx eas-cli@latest build --platform android --profile development --local",
     "build:eas:qa": "npx eas-cli@latest build --platform android --profile qa --local",
-    "build:eas:prod": "npx eas-cli@latest build --platform android --profile production",
+    "build:eas:prod": "npx eas-cli@latest build --platform android --profile production --local",
     "build:eas:all": "npm run build:eas:qa -- --no-wait && npm run build:eas:prod -- --no-wait",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint"

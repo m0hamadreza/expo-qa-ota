@@ -24,15 +24,18 @@ Production  (channel "production" → main) ─────┘  always gets the 
 | **channel** | baked into the APK: `qa` or `production` |
 | **channel → branch** | both channels point at `main` |
 | **branch surfing** | enabled on `qa` only, pattern `*`. The start screen `src/BranchGate.tsx` uses `@xprem/control-center` to list and switch branches |
-| **runtimeVersion** | `1.0.0` in `app.config.ts`. Updates only reach builds with the same value |
+| **runtimeVersion** | `1.1.0` in `app.config.ts`. Updates only reach builds with the same value |
 
 OTA updates replace **JavaScript and assets only**. If a branch adds a native module or changes native config, bump `runtimeVersion` and build new APKs. Branches built for another runtime version don't show up in the QA picker.
+
+Expo Router adds native dependencies. Rebuild the QA, production, and development clients to use it. QA branches need an update built with runtime `1.1.0` to appear in the new QA client.
 
 ## Project layout
 
 ```
-App.tsx                 demo screen (with a deliberate "Add to cart" bug on main)
-src/Root.tsx            QA: branch picker first, then the app. Production: the app directly
+src/app/index.tsx       Cart screen
+src/app/_layout.tsx     Expo Router stack: QA opens the picker first
+src/app/choose-branch.tsx  QA branch picker route
 src/BranchGate.tsx      QA start screen: pick a branch → Enter app
 src/variant.ts          QA vs production, read from the native channel (Updates.channel)
 src/BuildInfo.tsx       shows channel / branch / update id

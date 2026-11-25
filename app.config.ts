@@ -33,11 +33,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: IS_DEV ? 'OTA Demo Dev' : IS_QA ? 'OTA Demo QA' : 'OTA Demo',
   slug: 'expo-qa-ota',
-  ...(IS_DEV && { scheme: 'expoqaota-dev' }),
+  scheme: IS_DEV ? 'expoqaota-dev' : IS_QA ? 'expoqaota-qa' : 'expoqaota',
   version: '1.0.0',
   // Bump this whenever native code changes (new native package, SDK upgrade...).
   // Updates are only served to builds with the exact same runtimeVersion.
-  runtimeVersion: '1.0.0',
+  runtimeVersion: '1.1.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
@@ -74,6 +74,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       : { keyid: 'main', alg: 'rsa-v1_5-sha256' },
   },
   plugins: [
+    'expo-router',
     [
       'expo-build-properties',
       {

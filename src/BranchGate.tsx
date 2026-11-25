@@ -1,5 +1,5 @@
 import * as Updates from 'expo-updates';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -64,6 +64,8 @@ function since(iso: string): string {
 }
 
 type Props = { onEnter: () => void };
+
+export const BranchGateEntryContext = createContext<Props['onEnter'] | null>(null);
 
 /**
  * QA only: the first screen of the app. Pick a branch, press "Enter app", and

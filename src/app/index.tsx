@@ -2,11 +2,11 @@ import { StepperButton } from '@m0hamadreza/expo-qa-ota-design-system';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { BuildInfo } from './src/BuildInfo';
-import { UpdateBanner } from './src/UpdateBanner';
-import { isQA } from './src/variant';
+import { BuildInfo } from '../BuildInfo';
+import { UpdateBanner } from '../UpdateBanner';
+import { isQA } from '../variant';
 
-export default function App() {
+export default function CartScreen() {
   const [count, setCount] = useState(0);
 
   return (
@@ -40,7 +40,6 @@ export default function App() {
           </StepperButton>
         </View>
 
-        {/* QA switches branch on the picker before the app (src/BranchGate.tsx), not here. */}
         {!isQA && <UpdateBanner />}
 
         <BuildInfo />
