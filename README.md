@@ -48,12 +48,17 @@ certs/certificate.pem   public key the app uses to verify updates (code signing)
 
 Requirements: Node 20+, Docker, Android SDK + JDK 17, an emulator or Android phone on the same Wi-Fi.
 
-Set `NODE_AUTH_TOKEN` in your shell before installing dependencies. Use a GitHub
-classic personal access token with `read:packages` and access to the private
-Design System package.
+Copy `.env.example` to `.env.local` when setting up the app. Set
+`NODE_AUTH_TOKEN` in `.env.local` to a GitHub classic personal access token with
+`read:packages` and access to the private Design System package. Load the file
+before running npm so it can read the token.
 
 ```bash
-npm ci
+(
+  set -a
+  source ./.env.local && npm ci
+)
+
 cp infra/.env.example infra/.env   # set BASE_URL to your Mac's LAN IP, fill in the secrets
 npm run infra:up                   # xprem on :3000, dashboard at http://localhost:3000/dashboard
 npm run infra:bootstrap            # app + token + certificate + channels → .env.local
