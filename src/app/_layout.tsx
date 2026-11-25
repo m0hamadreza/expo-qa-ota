@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={entered}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="update-details" options={{ headerShown: true, title: 'Update details' }} />
         </Stack.Protected>
         <Stack.Protected guard={!entered}>
           <Stack.Screen name="choose-branch" />

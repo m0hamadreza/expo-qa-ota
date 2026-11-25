@@ -1,8 +1,8 @@
 import { StepperButton } from '@m0hamadreza/expo-qa-ota-design-system';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { BuildInfo } from '../BuildInfo';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { UpdateBanner } from '../UpdateBanner';
 import { isQA } from '../variant';
 
@@ -42,7 +42,7 @@ export default function CartScreen() {
 
         {!isQA && <UpdateBanner />}
 
-        <BuildInfo />
+        <Button title="Update details" onPress={() => router.navigate('/update-details')} />
       </View>
       <StatusBar style="auto" />
     </SafeAreaView>
