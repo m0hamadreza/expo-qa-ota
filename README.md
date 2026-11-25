@@ -48,8 +48,12 @@ certs/certificate.pem   public key the app uses to verify updates (code signing)
 
 Requirements: Node 20+, Docker, Android SDK + JDK 17, an emulator or Android phone on the same Wi-Fi.
 
+Set `NODE_AUTH_TOKEN` in your shell before installing dependencies. Use a GitHub
+classic personal access token with `read:packages` and access to the private
+Design System package.
+
 ```bash
-npm install
+npm ci
 cp infra/.env.example infra/.env   # set BASE_URL to your Mac's LAN IP, fill in the secrets
 npm run infra:up                   # xprem on :3000, dashboard at http://localhost:3000/dashboard
 npm run infra:bootstrap            # app + token + certificate + channels → .env.local
@@ -93,6 +97,24 @@ Set `XPREM_URL` and `XPREM_APP_ID` in `build.production.env` in `eas.json`. The 
 
 EAS CLI prompts for Android signing credentials on the first build of each variant. `npm run build:eas:all` queues both builds and prints links to their EAS build pages, where the APKs are available when the jobs finish.
 
+Set `NODE_AUTH_TOKEN` as a project secret in the EAS `production` environment,
+which both build profiles use. For builds with `--local`, export the token in
+the shell before starting the build.
+
+## Upgrade the Design System
+
+The [Design System repository](https://github.com/m0hamadreza/expo-qa-ota-design-system)
+publishes versions to GitHub Packages after merges to its `main` branch.
+To adopt a published version, export `NODE_AUTH_TOKEN` and run the following,
+using the version you want to install.
+
+```bash
+npx expo install @m0hamadreza/expo-qa-ota-design-system@0.1.0 -- --save-exact
+```
+
+Commit both `package.json` and `package-lock.json` and verify the new version on
+a QA branch before merging.
+
 ## Day-to-day flow
 
 1. Bug report: "Add to cart does nothing".
@@ -123,6 +145,9 @@ The dashboard can do the same, and also partial rollouts (`--rollout-percentage`
 ## CI (later)
 
 `.github/workflows/publish-ota.yml` publishes every pushed branch. It stays off until the repo variable `XPREM_URL` is set. GitHub's cloud runners can't reach your laptop. Either run xprem on a real server, or register a self-hosted runner on your Mac and set `RUNNER=self-hosted`.
+
+Set the GitHub Actions repository secret `DESIGN_SYSTEM_READ_TOKEN` to a GitHub
+Packages read token so the workflow can run `npm ci`.
 
 ## Going to production for real
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@m0hamadreza/expo-qa-ota-design-system": "0.1.0",
     "@xprem/control-center": "3.2.8",
     "expo": "~58.0.26",
     "expo-build-properties": "~58.0.12",

@@ -1,6 +1,7 @@
+import { StepperButton } from '@m0hamadreza/expo-qa-ota-design-system';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { BuildInfo } from './src/BuildInfo';
 import { UpdateBanner } from './src/UpdateBanner';
 import { isQA } from './src/variant';
@@ -21,30 +22,22 @@ export default function App() {
         <Text style={styles.count}>{count} items</Text>
 
         <View style={styles.stepper}>
-          <Pressable
-            accessibilityRole="button"
+          <StepperButton
             accessibilityLabel="Remove one item"
             disabled={count === 0}
-            style={({ pressed }) => [
-              styles.stepButton,
-              count === 0 && styles.stepButtonDisabled,
-              pressed && styles.stepButtonPressed,
-            ]}
             onPress={() => setCount((c) => Math.max(0, c - 1))}
           >
-            <Text style={styles.stepButtonText}>−</Text>
-          </Pressable>
+            {'−'}
+          </StepperButton>
 
           <Text style={styles.stepperValue}>{count}</Text>
 
-          <Pressable
-            accessibilityRole="button"
+          <StepperButton
             accessibilityLabel="Add one item"
-            style={({ pressed }) => [styles.stepButton, pressed && styles.stepButtonPressed]}
             onPress={() => setCount((c) => c + 1)}
           >
-            <Text style={styles.stepButtonText}>+</Text>
-          </Pressable>
+            +
+          </StepperButton>
         </View>
 
         {/* QA switches branch on the picker before the app (src/BranchGate.tsx), not here. */}
@@ -76,16 +69,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: '700' },
   count: { fontSize: 20, color: '#3F3F46' },
   stepper: { flexDirection: 'row', alignItems: 'center', gap: 20 },
-  stepButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-    backgroundColor: '#16A34A',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepButtonPressed: { opacity: 0.7 },
-  stepButtonDisabled: { backgroundColor: '#A1A1AA' },
-  stepButtonText: { color: 'white', fontSize: 26, fontWeight: '700' },
   stepperValue: { fontSize: 22, fontWeight: '600', minWidth: 40, textAlign: 'center' },
 });

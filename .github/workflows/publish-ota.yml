@@ -6,6 +6,7 @@
 #      a self-hosted runner on your Mac and set the repo variable RUNNER=self-hosted.
 #   2. Repo Settings -> Secrets and variables -> Actions:
 #        secret   EOO_TOKEN      (API token from the xprem dashboard)
+#        secret   DESIGN_SYSTEM_READ_TOKEN (GitHub Packages read token)
 #        variable XPREM_URL      (e.g. https://ota.example.com)
 #        variable XPREM_APP_ID   (App ID from the xprem dashboard)
 name: Publish OTA update
@@ -29,6 +30,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.DESIGN_SYSTEM_READ_TOKEN }}
       - run: node scripts/publish.mjs --platform android
         env:
           EOO_TOKEN: ${{ secrets.EOO_TOKEN }}
