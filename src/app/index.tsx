@@ -18,7 +18,7 @@ export default function CartScreen() {
           </View>
         )}
 
-        <Text style={styles.title}>Cart</Text>
+        <Text style={styles.title}>Cart (CI test)</Text>
         <Text style={styles.count}>{count} items</Text>
 
         <View style={styles.stepper}>
