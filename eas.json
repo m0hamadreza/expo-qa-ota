@@ -16,7 +16,7 @@
       "environment": "production",
       "env": {
         "APP_VARIANT": "production",
-        "XPREM_URL": "http://192.168.1.193:3000",
+        "XPREM_URL": "https://wrench-candy-simmering.ngrok-free.dev",
         "XPREM_APP_ID": "6e9c35a0-208d-4865-aabe-6bf85132c8e8"
       },
       "android": {
